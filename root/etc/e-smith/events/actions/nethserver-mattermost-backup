@@ -1,0 +1,3 @@
+#!/bin/bash
+
+su - postgres -c "scl enable rh-postgresql94 -- pg_dump --port 55432 mattermost > /var/lib/nethserver/mattermost/backup/mattermost.sql"

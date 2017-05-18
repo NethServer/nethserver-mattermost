@@ -1,0 +1,40 @@
+#!/bin/bash
+
+#
+# Copyright (C) 2017 Nethesis S.r.l.
+# http://www.nethesis.it - nethserver@nethesis.it
+#
+# This script is part of NethServer.
+#
+# NethServer is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License,
+# or any later version.
+#
+# NethServer is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with NethServer.  If not, see COPYING.
+#
+
+su - postgres -c "scl enable rh-postgresql94 -- psql --port=55432 -lqt | cut -d \| -f 1 | grep -q -w mattermost"
+if [ $? -eq 1 ]; then # database do not exists
+
+    # create db and users
+    tmp_sql=`mktemp`
+    chmod a+r $tmp_sql
+    password=`perl -e "use NethServer::Password; print NethServer::Password::store('mattermost');"`
+cat << EOF > $tmp_sql
+CREATE database mattermost;
+CREATE USER mattuser WITH PASSWORD '$password';
+ALTER USER mattuser WITH SUPERUSER;
+GRANT ALL PRIVILEGES ON DATABASE mattermost to mattuser;
+EOF
+    su - postgres  -c "scl enable rh-postgresql94 -- psql --port=55432 < $tmp_sql" >/dev/null
+    rm -f $tmp_sql
+
+fi
+

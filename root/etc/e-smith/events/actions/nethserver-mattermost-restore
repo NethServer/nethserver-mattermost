@@ -1,0 +1,22 @@
+#!/bin/bash
+
+# Stop mattermost instance
+systemctl stop mattermost
+
+if [ -f /var/lib/nethserver/mattermost/backup/mattermost.sql ]; then
+    drop_sql=`mktemp`
+    chown postgres:postgres $drop_sql
+    # drop all existing connections to the db and block new ones
+    echo "UPDATE pg_database SET datallowconn = 'false' WHERE datname = 'mattermost';" >> $drop_sql
+    echo "SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname = 'mattermost';" >> $drop_sql
+    # drop the db, then recreate it
+    echo "DROP DATABASE mattermost;" >> $drop_sql
+    echo "DROP USER IF EXISTS mattuser;" >> $drop_sql
+    password=`perl -e "use NethServer::Password; print NethServer::Password::store('mattermost');"`
+    echo "CREATE database mattermost; CREATE USER mattuser WITH PASSWORD '$password'; GRANT ALL PRIVILEGES ON DATABASE mattermost to mattuser;" >> $drop_sql 
+    # allow new connections to db
+    echo "UPDATE pg_database SET datallowconn = 'true' WHERE datname = 'mattermost';" >> $drop_sql
+    su - postgres -c "scl enable rh-postgresql94 -- psql --port=55432 < $drop_sql" >/dev/null
+    su - postgres -c "scl enable rh-postgresql94 -- psql --port=55432 mattermost < /var/lib/nethserver/mattermost/backup/mattermost.sql" >/dev/null
+    rm -f $drop_sql
+fi

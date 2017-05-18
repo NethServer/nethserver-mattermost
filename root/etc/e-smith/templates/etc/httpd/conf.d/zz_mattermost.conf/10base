@@ -1,0 +1,47 @@
+<VirtualHost *:443>
+  ServerName {{$mattermost{'VirtualHost'} || 'mattermost.local'}}
+
+  SSLEngine on
+  SSLCertificateFile /etc/pki/tls/certs/localhost.crt
+  SSLCertificateKeyFile /etc/pki/tls/private/localhost.key
+  { ($pki{ChainFile} && -e $pki{ChainFile})? '' : '# '}SSLCertificateChainFile { $pki{ChainFile} }
+  SSLCipherSuite HIGH:MEDIUM:!aNULL:!MD5:!SEED:!IDEA
+
+
+  ProxyPreserveHost On
+
+  # setup the proxy
+  <Proxy *>
+         Order allow,deny
+         Allow from all
+  </Proxy>
+
+  # Set web sockets
+  RewriteEngine On
+  RewriteCond %\{REQUEST_URI\} /api/v[0-9]+/(users/)?websocket [NC,OR]
+  RewriteCond %\{HTTP:UPGRADE\} ^WebSocket$ [NC,OR]
+  RewriteCond %\{HTTP:CONNECTION\} ^Upgrade$ [NC]
+  RewriteRule .* ws://127.0.0.1:8065%\{REQUEST_URI\} [P,QSA,L]
+  RewriteCond %\{DOCUMENT_ROOT\}/%\{REQUEST_FILENAME\} !-f
+
+  # Force SSL redirect enabled
+  RewriteCond %\{HTTPS\} !=on
+  RewriteRule (.*) https://%\{SERVER_NAME\}%\{REQUEST_URI\} [END,QSA,R=permanent]
+
+  <LocationMatch "^/api/v(?<apiversion>[0-9]+)/(?<apiusers>users/)?websocket">
+        Require all granted
+        ProxyPass ws://127.0.0.1:8065/api/v%\{env:MATCH_APIVERSION\}/%\{env:MATCH_APIUSERS\}websocket
+        ProxyPassReverse ws://127.0.0.1:8065/api/v%\{env:MATCH_APIVERSION\}/%\{env:MATCH_APIUSERS\}websocket
+        ProxyPassReverseCookieDomain 127.0.0.1 {{$mattermost{'VirtualHost'} || 'mattermost.local'}}
+  </LocationMatch>
+
+  <Location />
+        Require all granted
+        ProxyPass http://127.0.0.1:8065/
+        ProxyPassReverse http://127.0.0.1:8065/
+        ProxyPassReverseCookieDomain 127.0.0.1 {{$mattermost{'VirtualHost'} || 'mattermost.local'}}
+  </Location>
+
+</VirtualHost>
+
+
