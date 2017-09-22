@@ -9,7 +9,7 @@ Summary: NethServer Mattermost configuration
 Name: nethserver-mattermost
 Version: 0.0.1
 Release: 1%{?dist}
-License: GPL
+License: Proprietary
 Source: %{name}-%{version}.tar.gz
 Source1: https://releases.mattermost.com/%{mattermost_release}/mattermost-%{mattermost_release}-linux-amd64.tar.gz
 BuildArch: x86_64
