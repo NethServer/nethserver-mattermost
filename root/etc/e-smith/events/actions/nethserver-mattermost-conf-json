@@ -30,6 +30,7 @@ my $salt = NethServer::Password->new('', {length => 32})->generate()->getAscii()
 my $db = esmith::ConfigDB->open_ro() || die ("Can't open configuration db");
 my $company = $db->get_prop("OrganizationContact", "Company");
 my $domain = $db->get_value("DomainName");
+my $host = $db->get_prop("mattermost", "VirtualHost") || "https://mattermost.$domain";
 my $firstRun = 0;
 our $data;
 
@@ -79,6 +80,14 @@ set_if_empty('EmailSettings', 'InviteSalt', $salt);
 set_if_empty('EmailSettings', 'FeedbackEmail', "no-reply@".$domain);
 set_if_empty('EmailSettings', 'FeedbackName', "Mattermost $company");
 set_if_empty('EmailSettings', 'FeedbackOrganization', $company);
+
+# General options
+set_if_empty('ServiceSettings', 'SiteURL', "https://$host");
+
+# Force listen adress
+if ($firstRun) {
+    $data->{'ServiceSettings'}->{'ListenAddress'} = '127.0.0.1:8065';
+}
 
 open my $fh, ">", $config;
 print $fh encode_json($data);
