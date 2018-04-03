@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 
 #
-# Copyright (C) 2017 Nethesis S.r.l.
+# Copyright (C) 2018 Nethesis S.r.l.
 # http://www.nethesis.it - nethserver@nethesis.it
 #
 # This script is part of NethServer.
@@ -22,9 +22,27 @@
 
 use JSON;
 use NethServer::Password;
+use esmith::ConfigDB;
 my $config = "/opt/mattermost/config/config.json";
 my $password = NethServer::Password::store('mattermost');
+my $salt = NethServer::Password->new('', {length => 32})->generate()->getAscii();
 
+my $db = esmith::ConfigDB->open_ro() || die ("Can't open configuration db");
+my $company = $db->get_prop("OrganizationContact", "Company");
+my $domain = $db->get_value("DomainName");
+my $firstRun = 0;
+our $data;
+
+sub set_if_empty {
+  my $section = shift;
+  my $key = shift;
+  my $value = shift;
+
+  my $cur = $data->{$section}->{$key} || '';
+  if ($cur eq '') {
+     $data->{$section}->{$key} = $value;
+  }
+}
 
 my $json;
 {
@@ -33,13 +51,34 @@ my $json;
   $json = <$fh>;
   close $fh;
 }
-my $data = decode_json($json);
+$data = decode_json($json);
 
-print $data->{'DataSource'}."\n";
+if ($data->{'SqlSettings'}->{'DriverName'} ne "postgres") {
+  $firstRun = 1;
+}
+
+# Set database connection string
 $data->{'SqlSettings'}->{'DriverName'} = "postgres";
 $data->{'SqlSettings'}->{'DataSource'} = "postgres://mattuser:$password\@localhost:55432/mattermost?sslmode=disable&connect_timeout=10";
 
+# Set data directory
 $data->{'FileSettings'}->{'Directory'} = "/var/lib/nethserver/mattermost/data";
+
+# Enable mail and push notifications on the first configuration
+if ($firstRun) {
+  $data->{'EmailSettings'}->{'SendPushNotifications'} = "true";
+  $data->{'EmailSettings'}->{'PushNotificationContents'} = "full";
+  $data->{'EmailSettings'}->{'PushNotificationServer'} = "https://push.mattermost.com";
+  $data->{'EmailSettings'}->{'SendEmailNotifications'} = "true";
+}
+
+# Configure mail notifications
+set_if_empty('EmailSettings', 'SMTPServer', 'localhost');
+set_if_empty('EmailSettings', 'SMTPPort', '25');
+set_if_empty('EmailSettings', 'InviteSalt', $salt);
+set_if_empty('EmailSettings', 'FeedbackEmail', "no-reply@".$domain);
+set_if_empty('EmailSettings', 'FeedbackName', "Mattermost $company");
+set_if_empty('EmailSettings', 'FeedbackOrganization', $company);
 
 open my $fh, ">", $config;
 print $fh encode_json($data);
