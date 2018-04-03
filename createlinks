@@ -21,23 +21,42 @@
 
 use esmith::Build::CreateLinks  qw(:all);
 
-#
+#--------------------------------------------------
 # Event nethserver-mattermost-update 
-#
-event_actions("nethserver-mattermost-update", qw(
+#--------------------------------------------------
+
+$event = 'nethserver-mattermost-update';
+
+event_actions($event, qw(
   initialize-default-databases 00
   nethserver-mattermost-conf 20
   nethserver-mattermost-conf-json 30
 ));
 
-event_templates("nethserver-mattermost-update", qw(
+event_templates($event, qw(
   /etc/httpd/conf.d/zz_mattermost.conf
 ));
 
-event_services("nethserver-mattermost-update", qw(
+event_services($event, qw(
   httpd restart
   mattermost restart
 ));
+
+#--------------------------------------------------
+# Event nethserver-mattermost-save
+#--------------------------------------------------
+
+$event = 'nethserver-mattermost-save';
+
+event_templates($event, qw(
+  /etc/httpd/conf.d/zz_mattermost.conf
+));
+
+event_services($event, qw(
+  httpd restart
+  mattermost restart
+));
+
 
 #--------------------------------------------------
 # actions for pre-backup-data event
