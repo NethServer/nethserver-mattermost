@@ -48,6 +48,7 @@ class Mattermost extends \Nethgui\Controller\AbstractController
 
     public function prepareView(\Nethgui\View\ViewInterface $view)
     {
+       parent::prepareView($view);
        $domain = $this->getPlatform()->getDatabase('configuration')->getType("DomainName");
        $view['DefaultUrl'] = "mattermost.$domain";
     }
