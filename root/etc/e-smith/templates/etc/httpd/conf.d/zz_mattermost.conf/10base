@@ -1,11 +1,37 @@
 <VirtualHost *:443>
-  ServerName {{$mattermost{'VirtualHost'} || 'mattermost.local'}}
+  ServerName {{$mattermost{'VirtualHost'} || 'mattermost.'.$DomainName}}
 
   SSLEngine on
   SSLCertificateFile /etc/pki/tls/certs/localhost.crt
   SSLCertificateKeyFile /etc/pki/tls/private/localhost.key
   { ($pki{ChainFile} && -e $pki{ChainFile})? '' : '# '}SSLCertificateChainFile { $pki{ChainFile} }
-  SSLCipherSuite HIGH:MEDIUM:!aNULL:!MD5:!SEED:!IDEA
+
+{
+  my $tlsPolicy = $tls{'policy'} || '0';
+  my $cipherSuite = $httpd{SSLCipherSuite} || '';
+
+  if ($tlsPolicy >= 20180330) {
+     $OUT .= qq(
+  # cipher selection 2018-03-30
+  SSLProtocol all -SSLv2 -SSLv3
+
+  SSLCipherSuite EDH+CAMELLIA:EDH+aRSA:EECDH+aRSA+AESGCM:EECDH+aRSA+SHA256:EECDH:\\
+  +CAMELLIA128:+AES128:+SSLv3:!aNULL:!eNULL:!LOW:!3DES:!MD5:!EXP:!PSK:!DSS:!RC4:\\
+  !SEED:!IDEA:!ECDSA:kEDH:CAMELLIA128-SHA:AES128-SHA
+
+  SSLHonorCipherOrder on
+  SSLCompression Off
+);
+  } else {
+    if ($cipherSuite ne '') {
+      $OUT .= "  # cipher selection 2017-10-26 (Legacy)\n";
+      $OUT .= "  SSLCipherSuite $cipherSuite\n";
+    } else {
+      $OUT .=   "SSLCipherSuite HIGH:MEDIUM:!aNULL:!MD5:!SEED:!IDEA\n";
+    }
+
+  }
+}
 
 
   ProxyPreserveHost On
@@ -24,7 +50,7 @@
   RewriteRule .* ws://127.0.0.1:8065%\{REQUEST_URI\} [P,QSA,L]
   RewriteCond %\{DOCUMENT_ROOT\}/%\{REQUEST_FILENAME\} !-f
 
-  # Force SSL redirect enabled
+  # Force SSL redirect
   RewriteCond %\{HTTPS\} !=on
   RewriteRule (.*) https://%\{SERVER_NAME\}%\{REQUEST_URI\} [END,QSA,R=permanent]
 
