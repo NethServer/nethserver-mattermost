@@ -27,7 +27,7 @@ use esmith::Build::CreateLinks  qw(:all);
 event_actions("nethserver-mattermost-update", qw(
   initialize-default-databases 00
   nethserver-mattermost-conf 20
-  nethserver-mattermost-conf-db 30
+  nethserver-mattermost-conf-json 30
 ));
 
 event_templates("nethserver-mattermost-update", qw(
