@@ -81,7 +81,7 @@ event_services($event, 'mattermost' => 'restart');
 # actions for tls-policy-save event
 #--------------------------------------------------
 
-$event = 'tls-policy-save'
+$event = 'tls-policy-save';
 
 event_templates($event, qw(
   /etc/httpd/conf.d/zz_mattermost.conf
