@@ -1,0 +1,74 @@
+#!/usr/bin/perl
+
+#
+# Copyright (C) 2018 Nethesis S.r.l.
+# http://www.nethesis.it - nethserver@nethesis.it
+#
+# This script is part of NethServer.
+#
+# NethServer is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License,
+# or any later version.
+#
+# NethServer is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with NethServer.  If not, see COPYING.
+#
+
+#
+# Read users and groups from the account provider
+# and dump all accounts in a file with tsv format:
+#
+# - /var/lib/nethserver/backup/users.tsv
+# - /var/lib/nethserver/backup/groups.tsv
+#
+
+use strict;
+use warnings;
+
+use JSON;
+use NethServer::Password;
+
+our $users = decode_json(`/usr/libexec/nethserver/list-users`) or die("Can't read user list");
+our $generator = NethServer::Password->new('', {length => 8});
+our $default_password = $ARGV[0];
+
+sub create_user {
+   my $user = shift;
+   my $stripped = $user;
+   $stripped =~ s/(@.*)//; # strip domain
+   my $password = $default_password || $generator->generate()->getAscii();
+  
+   my $cmd = "cd /opt/mattermost; ./bin/platform user create --email $user --password '$password' --username $stripped";
+
+   my @output = `cd /opt/mattermost; ./bin/platform user search $stripped 2>&1`;
+   foreach (@output) {
+       if ($_ =~ /username: $stripped/) {
+           print "Skipping existing user: '$stripped'\n";
+           return;
+       }
+   }
+
+   print "Creating user: '$stripped' with password '$password' ... ";
+   system($cmd."&>/dev/null");
+   if ($? == 0) {
+       print "OK\n";
+   } else {
+       print "FAIL (Command was: $cmd)\n";
+   }
+
+}
+
+foreach (keys(%$users)) {
+    my $key = $_;
+    if ($users->{$_}->{'locked'}) {
+        print "Skipping locked user: '$key'\n";
+    } else {
+        create_user($_);
+    }
+}
