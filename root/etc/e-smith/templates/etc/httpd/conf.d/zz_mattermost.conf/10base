@@ -1,3 +1,8 @@
+<VirtualHost *:80>
+   ServerName {{$mattermost{'VirtualHost'} || 'mattermost.'.$DomainName}}
+   Redirect permanent / https://{{$mattermost{'VirtualHost'} || 'mattermost.'.$DomainName}}
+</VirtualHost>
+
 <VirtualHost *:443>
   ServerName {{$mattermost{'VirtualHost'} || 'mattermost.'.$DomainName}}
 
