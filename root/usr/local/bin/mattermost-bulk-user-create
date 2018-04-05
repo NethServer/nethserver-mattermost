@@ -33,10 +33,15 @@ use warnings;
 
 use JSON;
 use NethServer::Password;
+use esmith::ConfigDB;
 
 our $users = decode_json(`/usr/libexec/nethserver/list-users`) or die("Can't read user list");
 our $generator = NethServer::Password->new('', {length => 8});
 our $default_password = $ARGV[0];
+my $db = esmith::ConfigDB->open_ro() || die("Can't open config db");
+our $org = $db->get_prop("OrganizationContact","Company") || 'DefaultTeam';
+our $team = lc($org);
+$team =~ s/\s(.*)$//;
 
 sub create_user {
    my $user = shift;
@@ -58,11 +63,17 @@ sub create_user {
    system($cmd."&>/dev/null");
    if ($? == 0) {
        print "OK\n";
+       system("cd /opt/mattermost; bin/platform team add '$team' '$stripped' &>/dev/null");
    } else {
        print "FAIL (Command was: $cmd)\n";
    }
 
 }
+
+print "Creating default team: $team ($org) ... ";
+system("cd /opt/mattermost; bin/platform team create --name '$team' --display_name '$org' &>/dev/null");
+# hide error if team already exists
+print "OK\n";
 
 foreach (keys(%$users)) {
     my $key = $_;
