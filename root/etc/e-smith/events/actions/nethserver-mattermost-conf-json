@@ -30,7 +30,7 @@ my $salt = NethServer::Password->new('', {length => 32})->generate()->getAscii()
 my $db = esmith::ConfigDB->open_ro() || die ("Can't open configuration db");
 my $company = $db->get_prop("OrganizationContact", "Company");
 my $domain = $db->get_value("DomainName");
-my $host = $db->get_prop("mattermost", "VirtualHost") || "https://mattermost.$domain";
+my $host = $db->get_prop("mattermost", "VirtualHost") || '';
 my $firstRun = 0;
 our $data;
 
@@ -82,7 +82,9 @@ set_if_empty('EmailSettings', 'FeedbackName', "Mattermost $company");
 set_if_empty('EmailSettings', 'FeedbackOrganization', $company);
 
 # General options
-set_if_empty('ServiceSettings', 'SiteURL', "https://$host");
+if ($host ne '') {
+  set_if_empty('ServiceSettings', 'SiteURL', "https://$host");
+}
 
 # Force listen adress
 if ($firstRun) {

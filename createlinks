@@ -48,6 +48,10 @@ event_services($event, qw(
 
 $event = 'nethserver-mattermost-save';
 
+event_actions($event, qw(
+  nethserver-mattermost-conf-json 30
+));
+
 event_templates($event, qw(
   /etc/httpd/conf.d/zz_mattermost.conf
 ));
