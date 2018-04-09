@@ -22,7 +22,7 @@ namespace NethServer\Module;
 
 use Nethgui\System\PlatformInterface as Validate;
 
-class Mattermost extends \Nethgui\Controller\CompositeController
+class Mattermost extends \Nethgui\Controller\CompositeController implements \Nethgui\Component\DependencyConsumer
 {
 
     protected function initializeAttributes(\Nethgui\Module\ModuleAttributesInterface $attributes)
@@ -35,7 +35,41 @@ class Mattermost extends \Nethgui\Controller\CompositeController
     public function initialize()
     {
         parent::initialize();
-        $this->loadChildrenDirectory();
+        $this->addChild(new Mattermost\Main());
+        $this->addChild(new Mattermost\ImportUsers());
+    }
+
+    public function setUserNotifications(\Nethgui\Model\UserNotifications $n)
+    {
+        $this->notifications = $n;
+        return $this;
+    }
+
+    public function setSystemTasks(\Nethgui\Model\SystemTasks $t)
+    {
+        $this->systemTasks = $t;
+        return $this;
+    }
+
+    public function getDependencySetters()
+    {
+        return array(
+            'UserNotifications' => array($this, 'setUserNotifications'),
+            'SystemTasks' => array($this, 'setSystemTasks'),
+        );
+    }
+
+    public function prepareView(\Nethgui\View\ViewInterface $view)
+    {
+        parent::prepareView($view);
+        if($this->getRequest()->hasParameter('installSuccess')) {
+            $view->getCommandList()->show();
+        } elseif($this->getRequest()->hasParameter('installFailure')) {
+            $taskStatus = $this->systemTasks->getTaskStatus($this->getRequest()->getParameter('taskId'));
+            $data = \Nethgui\Module\Tracker::findFailures($taskStatus);
+            $this->notifications->trackerError($data);
+            $view->getCommandList('Main')->show();
+        }
     }
 
 }

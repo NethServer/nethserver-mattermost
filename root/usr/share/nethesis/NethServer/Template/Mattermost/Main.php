@@ -11,7 +11,8 @@ echo $view->panel()
         ->insert($view->textInput('VirtualHost')->setAttribute('placeholder',$view['DefaultUrl']))
     );
 
-echo $view->buttonList($view::BUTTON_SUBMIT);
+echo $view->buttonList($view::BUTTON_SUBMIT | $view::BUTTON_HELP)
+    ->insert($view->button('ImportUsersLink', $view::BUTTON_LINK));
 
 $view->includeCss("
 .mattermost-info { padding: 10px; margin: 10px; border: 1px solid #c2c2c2; width: 50%; background-color: #eee }

@@ -1,0 +1,5 @@
+#
+# 20_nethserver_mattermost
+#
+%adm ALL=NOPASSWD: /usr/sbin/mattermost-bulk-user-create
+

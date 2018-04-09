@@ -51,11 +51,11 @@ class Main extends \Nethgui\Controller\AbstractController
        parent::prepareView($view);
        $domain = $this->getPlatform()->getDatabase('configuration')->getType("DomainName");
        $view['DefaultUrl'] = "mattermost.$domain";
+       $view['ImportUsersLink'] = $view->getModuleUrl('../ImportUsers');
     }
 
     protected function onParametersSaved($changes)
     {
-        $this->getPlatform()->signalEvent('nethserver-mattermost-save');
+        $this->getPlatform()->signalEvent('nethserver-mattermost-save &');
     }
-
 }
