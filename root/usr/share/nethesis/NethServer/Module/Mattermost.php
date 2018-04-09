@@ -1,5 +1,4 @@
 <?php
-
 namespace NethServer\Module;
 
 /*
@@ -23,18 +22,12 @@ namespace NethServer\Module;
 
 use Nethgui\System\PlatformInterface as Validate;
 
-/**
- * Configure Mattermost
- *
- * @author Giacomo Sanchietti<giacomo.sanchietti@nethesis.it>
- */
-class Mattermost extends \Nethgui\Controller\AbstractController
+class Mattermost extends \Nethgui\Controller\CompositeController
 {
 
-    protected function initializeAttributes(\Nethgui\Module\ModuleAttributesInterface $base)
+    protected function initializeAttributes(\Nethgui\Module\ModuleAttributesInterface $attributes)
     {
-        return new \NethServer\Tool\CustomModuleAttributesProvider($base, array(
-            'languageCatalog' => array('NethServer_Module_Mattermost','NethServer_Module_Pki'),
+        return new \NethServer\Tool\CustomModuleAttributesProvider($attributes, array(
             'category' => 'Configuration')
         );
     }
@@ -42,20 +35,7 @@ class Mattermost extends \Nethgui\Controller\AbstractController
     public function initialize()
     {
         parent::initialize();
-        $this->declareParameter('VirtualHost', Validate::HOSTNAME_FQDN, array('configuration', 'mattermost', 'VirtualHost'));
-        $this->declareParameter('status', Validate::SERVICESTATUS, array('configuration', 'mattermost', 'status'));
-    }
-
-    public function prepareView(\Nethgui\View\ViewInterface $view)
-    {
-       parent::prepareView($view);
-       $domain = $this->getPlatform()->getDatabase('configuration')->getType("DomainName");
-       $view['DefaultUrl'] = "mattermost.$domain";
-    }
-
-    protected function onParametersSaved($changes)
-    {
-        $this->getPlatform()->signalEvent('nethserver-mattermost-save');
+        $this->loadChildrenDirectory();
     }
 
 }
