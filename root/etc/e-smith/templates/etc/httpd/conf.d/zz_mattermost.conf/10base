@@ -1,6 +1,10 @@
 <VirtualHost *:80>
+    IncludeOptional conf.d/default-virtualhost.inc
+</VirtualHost>
+
+<VirtualHost *:80>
    ServerName {{$mattermost{'VirtualHost'} || 'mattermost.'.$DomainName}}
-   Redirect permanent / https://{{$mattermost{'VirtualHost'} || 'mattermost.'.$DomainName}}
+   RedirectMatch 301 ^(?!/\.well-known/acme-challenge/).* https://{{$mattermost{'VirtualHost'} || 'mattermost.'.$DomainName}}
 </VirtualHost>
 
 <VirtualHost *:443>
