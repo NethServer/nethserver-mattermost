@@ -57,7 +57,7 @@ cat %{name}-%{version}-filelist
 %config /opt/mattermost/config/config.json
 %doc COPYING
 %dir %{_nseventsdir}/%{name}-update
-%config %attr (0440,root,root) %{_sysconfdir}/sudoers.d/20_nethserver_mattermost
+
 
 %changelog
 * Mon Apr 09 2018 Giacomo Sanchietti <giacomo.sanchietti@nethesis.it> - 1.0.0-1

@@ -1,4 +1,5 @@
 <?php
+
 namespace NethServer\Module;
 
 /*
@@ -22,12 +23,18 @@ namespace NethServer\Module;
 
 use Nethgui\System\PlatformInterface as Validate;
 
-class Mattermost extends \Nethgui\Controller\CompositeController implements \Nethgui\Component\DependencyConsumer
+/**
+ * Configure Mattermost
+ *
+ * @author Giacomo Sanchietti<giacomo.sanchietti@nethesis.it>
+ */
+class Mattermost extends \Nethgui\Controller\AbstractController
 {
 
-    protected function initializeAttributes(\Nethgui\Module\ModuleAttributesInterface $attributes)
+    protected function initializeAttributes(\Nethgui\Module\ModuleAttributesInterface $base)
     {
-        return new \NethServer\Tool\CustomModuleAttributesProvider($attributes, array(
+        return new \NethServer\Tool\CustomModuleAttributesProvider($base, array(
+            'languageCatalog' => array('NethServer_Module_Mattermost','NethServer_Module_Pki'),
             'category' => 'Configuration')
         );
     }
@@ -35,41 +42,20 @@ class Mattermost extends \Nethgui\Controller\CompositeController implements \Net
     public function initialize()
     {
         parent::initialize();
-        $this->addChild(new Mattermost\Main());
-        $this->addChild(new Mattermost\ImportUsers());
-    }
-
-    public function setUserNotifications(\Nethgui\Model\UserNotifications $n)
-    {
-        $this->notifications = $n;
-        return $this;
-    }
-
-    public function setSystemTasks(\Nethgui\Model\SystemTasks $t)
-    {
-        $this->systemTasks = $t;
-        return $this;
-    }
-
-    public function getDependencySetters()
-    {
-        return array(
-            'UserNotifications' => array($this, 'setUserNotifications'),
-            'SystemTasks' => array($this, 'setSystemTasks'),
-        );
+        $this->declareParameter('VirtualHost', Validate::HOSTNAME_FQDN, array('configuration', 'mattermost', 'VirtualHost'));
+        $this->declareParameter('status', Validate::SERVICESTATUS, array('configuration', 'mattermost', 'status'));
     }
 
     public function prepareView(\Nethgui\View\ViewInterface $view)
     {
-        parent::prepareView($view);
-        if($this->getRequest()->hasParameter('installSuccess')) {
-            $view->getCommandList()->show();
-        } elseif($this->getRequest()->hasParameter('installFailure')) {
-            $taskStatus = $this->systemTasks->getTaskStatus($this->getRequest()->getParameter('taskId'));
-            $data = \Nethgui\Module\Tracker::findFailures($taskStatus);
-            $this->notifications->trackerError($data);
-            $view->getCommandList('Main')->show();
-        }
+       parent::prepareView($view);
+       $domain = $this->getPlatform()->getDatabase('configuration')->getType("DomainName");
+       $view['DefaultUrl'] = "mattermost.$domain";
+    }
+
+    protected function onParametersSaved($changes)
+    {
+        $this->getPlatform()->signalEvent('nethserver-mattermost-save');
     }
 
 }
