@@ -7,7 +7,7 @@
 
 Summary: NethServer Mattermost configuration
 Name: nethserver-mattermost
-Version: 1.1.0
+Version: 1.1.1
 Release: 1%{?dist}
 License: Proprietary
 Source: %{name}-%{version}.tar.gz
@@ -60,6 +60,10 @@ cat %{name}-%{version}-filelist
 
 
 %changelog
+* Thu Jun 14 2018 Giacomo Sanchietti <giacomo.sanchietti@nethesis.it> - 1.1.1-1
+- Mattermost: upgrade to 4.10.1 - NethServer/dev#5526
+- Improve SSL configuration - NethServer/dev#5509
+
 * Thu Apr 26 2018 Giacomo Sanchietti <giacomo.sanchietti@nethesis.it> - 1.1.0-1
 - Mattermost blocks Let's Encrypt certificate requests - Bug NethServer/dev#5466
 - Remove "Import users" button from UI
