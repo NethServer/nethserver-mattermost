@@ -4,7 +4,7 @@ After=syslog.target network.target postgresql-9.4.service
 
 [Service]
 Type=simple
-WorkingDirectory=/opt/mattermost/bin
+WorkingDirectory=/opt/mattermost
 User=mattermost
 ExecStart=/opt/mattermost/bin/platform
 PIDFile=/var/spool/mattermost/pid/master.pid
