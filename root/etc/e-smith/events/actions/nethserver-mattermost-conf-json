@@ -81,6 +81,11 @@ set_if_empty('EmailSettings', 'FeedbackEmail', "no-reply@".$domain);
 set_if_empty('EmailSettings', 'FeedbackName', "Mattermost $company");
 set_if_empty('EmailSettings', 'FeedbackOrganization', $company);
 
+# Configure logging
+$data->{'LogSettings'}->{'EnableConsole'} = "false";
+set_if_empty('LogSettings', 'EnableFile', 'true');
+set_if_empty('LogSettings', 'FileLevel', 'error');
+
 # General options
 if ($host ne '') {
   set_if_empty('ServiceSettings', 'SiteURL', "https://$host");
