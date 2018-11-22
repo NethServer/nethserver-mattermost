@@ -1,0 +1,34 @@
+#!/bin/bash
+
+#
+# Copyright (C) 2018 Nethesis S.r.l.
+# http://www.nethesis.it - nethserver@nethesis.it
+#
+# This script is part of NethServer.
+#
+# NethServer is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License,
+# or any later version.
+#
+# NethServer is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with NethServer.  If not, see COPYING.
+#
+
+function _query
+{
+    echo $1 | su - postgres  -c "scl enable rh-postgresql94 -- psql  --port=55432 -t -d mattermost 2>/dev/null| tr -d '[:space:]' 2>/dev/null"
+}
+
+users=$(_query "select count(*) from users where deleteat = 0")
+teams=$(_query "select count(*) from teams where deleteat = 0")
+channels=$(_query "select count(*) from channels where deleteat = 0")
+posts=$(_query "select count(*) from users where deleteat = 0")
+
+prop=$(/sbin/e-smith/config getjson mattermost)
+printf '{"status": { "users": "%s", "teams": "%s", "channels": "%s", "posts": "%s" },"configuration":%s}' "$users" "$teams" "$channels" "$posts" "$prop"

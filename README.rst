@@ -67,3 +67,63 @@ Example: ::
 
   mattermost-bulk-user-create Password,1234
 
+
+Cockpit API
+===========
+
+read
+----
+
+Return mattermost status and configuration.
+No input required.
+
+Output
+^^^^^^
+
+Example: ::
+
+ {
+  "status": {
+    "users": "2",
+    "teams": "1",
+    "channels": "2",
+    "posts": "2"
+  },
+  "configuration": {
+    "props": {
+      "status": "enabled",
+      "access": "",
+      "VirtualHost": "mattermost.nethserver.org",
+      "TCPPort": "5432"
+    },
+    "name": "mattermost",
+    "type": "service"
+  }
+ }
+
+
+validate
+--------
+
+Constraints:
+
+- ``VirtualHost``: must be a valid FQDN
+
+Input
+^^^^^
+
+Example: ::
+
+ {
+  "props": {
+    "status": "enabled",
+    "VirtualHost": "mattermost.nethserver.org",
+  },
+  "name": "mattermost",
+ }
+
+
+update
+------
+
+Same input as validate.
