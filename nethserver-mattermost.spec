@@ -1,4 +1,4 @@
-%define mattermost_release 5.3.1
+%define mattermost_release 5.5.0
 
 # HACK: avoid "No build ID note found" error
 %undefine _missing_build_ids_terminate_build
@@ -12,6 +12,7 @@ Release: 1%{?dist}
 License: Proprietary
 Source: %{name}-%{version}.tar.gz
 Source1: https://releases.mattermost.com/%{mattermost_release}/mattermost-%{mattermost_release}-linux-amd64.tar.gz
+Source2: %{name}.tar.gz
 BuildArch: x86_64
 URL: %{url_prefix}/%{name}
 
@@ -42,6 +43,14 @@ rm -rf %{buildroot}
 mkdir -p %{buildroot}/opt
 tar xvf %{SOURCE1} -C %{buildroot}/opt
 mkdir -p %{buildroot}/var/lib/nethserver/mattermost/{backup,data}
+
+mkdir -p %{buildroot}/usr/share/cockpit/%{name}/
+mkdir -p %{buildroot}/usr/share/cockpit/nethserver/applications/
+mkdir -p %{buildroot}/usr/libexec/nethserver/api/%{name}/
+tar xvf %{SOURCE2} -C %{buildroot}/usr/share/cockpit/%{name}/
+cp -a %{name}.json %{buildroot}/usr/share/cockpit/nethserver/applications/
+cp -a api/* %{buildroot}/usr/libexec/nethserver/api/%{name}/
+
 %{genfilelist} %{buildroot} \
 %{genfilelist} %{buildroot} \
   --dir /var/lib/nethserver/mattermost/backup 'attr(0755,postgres,postgres)' \

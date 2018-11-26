@@ -1,0 +1,75 @@
+<h1 i18n="dashboard">Dashboard</h1>
+
+<div id="loader" class="spinner spinner-lg"></div>
+<div id="content">
+    <div class="stats-container card-pf-utilization-details">
+        <span class="card-pf-utilization-card-details-count" id="stats-users">0</span>
+        <span class="card-pf-utilization-card-details-description">
+            <span class="card-pf-utilization-card-details-line-2 stats-text" i18n="users"></span>
+        </span>
+    </div>
+    <div class="stats-container card-pf-utilization-details">
+        <span class="card-pf-utilization-card-details-count" id="stats-teams">0</span>
+        <span class="card-pf-utilization-card-details-description">
+            <span class="card-pf-utilization-card-details-line-2 stats-text" i18n="teams"></span>
+        </span>
+    </div>
+    <div class="stats-container card-pf-utilization-details">
+        <span class="card-pf-utilization-card-details-count" id="stats-channels">0</span>
+        <span class="card-pf-utilization-card-details-description">
+            <span class="card-pf-utilization-card-details-line-2 stats-text" i18n="channels"></span>
+        </span>
+    </div>
+    <div class="stats-container card-pf-utilization-details">
+        <span class="card-pf-utilization-card-details-count" id="stats-posts">0</span>
+        <span class="card-pf-utilization-card-details-description">
+            <span class="card-pf-utilization-card-details-line-2 stats-text" i18n="posts"></span>
+        </span>
+    </div>
+
+    <a id="link" target="_blank" href="" class="btn btn-primary btn-lg open-app" i18n="open_app"></a>
+</div>
+
+<script>
+    $('[i18n]').each(function () {
+        $(this).text(_($(this).attr('i18n')))
+    });
+
+    $('#loader').show()
+    $('#content').hide()
+
+    // get stats
+    nethserver.exec(
+        ["nethserver-mattermost/read"],
+        null,
+        null,
+        function (success) {
+            try {
+                success = JSON.parse(success);
+
+                var status = success.status;
+                for (var s in status) {
+                    $('#stats-' + s).val(status[s])
+                }
+
+                if (success.configuration.props.VirtualHost.length > 0) {
+                    $('#link').attr("href", '/' + success.configuration.props.VirtualHost)
+                    $('#link').attr("disabled", false)
+                } else {
+                    $('#link').removeAttr('href')
+                    $('#link').attr("disabled", true)
+                }
+
+                $('#loader').hide()
+                $('#content').show()
+            } catch (e) {
+                console.error(e)
+                $('#loader').hide()
+                $('#content').show()
+            }
+        },
+        function (error) {
+            console.error(error)
+        }
+    );
+</script>
