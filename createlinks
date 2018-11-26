@@ -35,6 +35,7 @@ event_actions($event, qw(
 
 event_templates($event, qw(
   /etc/httpd/conf.d/zz_mattermost.conf
+  /usr/share/cockpit/nethserver/applications/nethserver-mattermost.json
 ));
 
 event_services($event, qw(
@@ -54,6 +55,7 @@ event_actions($event, qw(
 
 event_templates($event, qw(
   /etc/httpd/conf.d/zz_mattermost.conf
+  /usr/share/cockpit/nethserver/applications/nethserver-mattermost.json
 ));
 
 event_services($event, qw(
