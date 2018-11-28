@@ -49,7 +49,7 @@
 
                 var status = success.status;
                 for (var s in status) {
-                    $('#stats-' + s).text(status[s])
+                    $('#stats-' + s).text(status[s] || 0)
                 }
 
                 if (success.configuration.props.VirtualHost.length > 0) {
