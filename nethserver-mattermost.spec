@@ -7,7 +7,7 @@
 
 Summary: NethServer Mattermost configuration
 Name: nethserver-mattermost
-Version: 1.1.2
+Version: 1.2.0
 Release: 1%{?dist}
 License: Proprietary
 Source: %{name}-%{version}.tar.gz
@@ -69,6 +69,9 @@ cat %{name}-%{version}-filelist
 
 
 %changelog
+* Mon Dec 03 2018 Davide Principi <davide.principi@nethesis.it> - 1.2.0-1
+- Mattermost: update to 5.5.0 - NethServer/dev#5659
+
 * Tue Sep 25 2018 Giacomo Sanchietti <giacomo.sanchietti@nethesis.it> - 1.1.2-1
 - Mattermost: update to release 5.3.1 - NethServer/dev#5587
 
