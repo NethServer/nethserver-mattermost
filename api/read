@@ -25,6 +25,19 @@ function _query
     echo $1 | su - postgres  -c "scl enable rh-postgresql94 -- psql  --port=55432 -t -d mattermost 2>/dev/null| tr -d '[:space:]' 2>/dev/null"
 }
 
+input=$(cat)
+action=$(jq -r .action <<<"$input")
+
+if [[ $action == "app-info" ]]; then
+    if [[ $(/sbin/e-smith/config getprop mattermost status) == "enabled" ]]; then
+        vhost=$(/sbin/e-smith/config getprop mattermost VirtualHost)
+        printf '{"url":"%s"}' "https://${vhost}"
+    else
+        printf '{}'
+    fi
+    exit 0;
+fi
+
 users=$(_query "select count(*) from users where deleteat = 0")
 teams=$(_query "select count(*) from teams where deleteat = 0")
 channels=$(_query "select count(*) from channels where deleteat = 0")
