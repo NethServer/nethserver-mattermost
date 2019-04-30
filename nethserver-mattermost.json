@@ -3,13 +3,12 @@
     "name": "Mattermost",
     "summary": "Mattermost Team Edition",
     "description": "Mattermost Team Edition",
-    "url": "nethserver-mattermost",
+    "url": "",
     "homepage": "https://github.com/NethServer/nethserver-mattermost",
     "provides": ["nethserver-mattermost"],
     "release": {
         "version": "1.0.0"
     },
-    "tags": ["tag1", "tag2", "tag3"],
     "license": "GPL-3.0",
     "bugs": {
         "url": "https://github.com/NethServer/dev/issues"
@@ -18,6 +17,9 @@
         "name": "Edoardo Spadoni, Giacomo Sanchietti",
         "url": "https://github.com/NethServer/nethserver-mattermost",
         "email": "edoardo.spadoni@nethesis.it, giacomo.sanchietti@nethesis.it"
+    },
+    "infoapi": {
+        "path": "nethserver-mattermost/read"
     },
     "icon": "logo.png"
 }

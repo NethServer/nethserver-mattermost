@@ -41,7 +41,7 @@
     // get stats
     nethserver.exec(
         ["nethserver-mattermost/read"],
-        null,
+        {},
         null,
         function (success) {
             try {
@@ -52,8 +52,8 @@
                     $('#stats-' + s).text(status[s] || 0)
                 }
 
-                if (success.configuration.props.VirtualHost.length > 0) {
-                    $('#link').attr("href", '/' + success.configuration.props.VirtualHost)
+                if (success.configuration.props.status == 'enabled' && success.configuration.props.VirtualHost.length > 0) {
+                    $('#link').attr("href", 'https://' + success.configuration.props.VirtualHost)
                     $('#link').attr("disabled", false)
                 } else {
                     $('#link').removeAttr('href')
