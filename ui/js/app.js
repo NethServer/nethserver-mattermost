@@ -5,28 +5,28 @@ $(document).on("nethserver-loaded", function () {
 
         this.get('#/', function (context) {
             context.app.swap('');
-            localStorage.setItem("path", '');
+            localStorage.setItem("mattermost-path", '');
             context.render('views/dashboard.html', {})
                 .appendTo(context.$element());
         });
 
         this.get('#/configuration', function (context) {
             context.app.swap('');
-            localStorage.setItem("path", 'configuration');
+            localStorage.setItem("mattermost-path", 'configuration');
             context.render('views/configuration.html', {})
                 .appendTo(context.$element());
         });
 
         this.get('#/logs', function (context) {
             context.app.swap('');
-            localStorage.setItem("path", 'logs');
+            localStorage.setItem("mattermost-path", 'logs');
             context.render('views/logs.html', {})
                 .appendTo(context.$element());
         });
 
         this.get('#/about', function (context) {
             context.app.swap('');
-            localStorage.setItem("path", 'about');
+            localStorage.setItem("mattermost-path", 'about');
             context.render('views/about.html', {})
                 .appendTo(context.$element());
         });
@@ -40,7 +40,7 @@ $(document).on("nethserver-loaded", function () {
 
     });
 
-    var path = localStorage.getItem("path") || '';
+    var path = localStorage.getItem("mattermost-path") || '';
     app.run('#/' + path);
 
     /* i18n */
