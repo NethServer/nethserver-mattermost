@@ -39,7 +39,7 @@ else
     users=$(_query "select count(*) from users where deleteat = 0")
     teams=$(_query "select count(*) from teams where deleteat = 0")
     channels=$(_query "select count(*) from channels where deleteat = 0")
-    posts=$(_query "select count(*) from users where deleteat = 0")
+    posts=$(_query "select count(*) from posts where deleteat = 0")
 
     prop=$(/sbin/e-smith/config getjson mattermost)
     printf '{"status": { "users": "%s", "teams": "%s", "channels": "%s", "posts": "%s" },"configuration":%s}' "$users" "$teams" "$channels" "$posts" "$prop"
