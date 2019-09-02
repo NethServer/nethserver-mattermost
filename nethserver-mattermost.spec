@@ -36,6 +36,7 @@ fi
 
 %build
 perl createlinks
+sed -i 's/_RELEASE_/%{version}/' %{name}.json
 
 %install
 rm -rf %{buildroot}
