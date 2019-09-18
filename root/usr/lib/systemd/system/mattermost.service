@@ -10,6 +10,7 @@ ExecStart=/opt/mattermost/bin/mattermost
 PIDFile=/var/spool/mattermost/pid/master.pid
 LimitNOFILE=49152
 Restart=always
+StandardOutput=null
 
 [Install]
 WantedBy=multi-user.target
