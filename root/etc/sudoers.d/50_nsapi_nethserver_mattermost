@@ -1,0 +1,9 @@
+#
+# nsapi_nethserver_mattermost
+#
+Cmnd_Alias NSAPI_NETHSERVER_MATTERMOST = \
+    /usr/libexec/nethserver/api/nethserver-mattermost/read, \
+    /usr/libexec/nethserver/api/nethserver-mattermost/update, \
+    /usr/libexec/nethserver/api/nethserver-mattermost/validate
+
+Defaults!NSAPI_NETHSERVER_MATTERMOST !requiretty
