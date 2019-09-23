@@ -53,7 +53,7 @@ cp -a %{name}.json %{buildroot}/usr/share/cockpit/nethserver/applications/
 cp -a api/* %{buildroot}/usr/libexec/nethserver/api/%{name}/
 
 %{genfilelist} %{buildroot} \
-%{genfilelist} %{buildroot} \
+  --file /etc/sudoers.d/50_nsapi_nethserver_mattermost 'attr(0440,root,root)' \
   --dir /var/lib/nethserver/mattermost/backup 'attr(0755,postgres,postgres)' \
   --dir /var/lib/nethserver/mattermost/data 'attr(0755,mattermost,mattermost)'  | grep -v /opt/mattermost/ >  %{name}-%{version}-filelist
 
