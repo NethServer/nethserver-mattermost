@@ -7,7 +7,7 @@
 
 Summary: NethServer Mattermost configuration
 Name: nethserver-mattermost
-Version: 1.3.2
+Version: 1.4.0
 Release: 1%{?dist}
 License: Proprietary
 Source: %{name}-%{version}.tar.gz
@@ -70,6 +70,10 @@ cat %{name}-%{version}-filelist
 
 
 %changelog
+* Tue Oct 01 2019 Giacomo Sanchietti <giacomo.sanchietti@nethesis.it> - 1.4.0-1
+- Sudoers based authorizations for Cockpit UI - NethServer/dev#5805
+- systemd unit: catch stdout to avoid useless logs (#22)
+
 * Tue Sep 03 2019 Giacomo Sanchietti <giacomo.sanchietti@nethesis.it> - 1.3.2-1
 - Cockpit. List correct application version - NethServer/dev#5819
 - Mattermost 5.14 - NethServer/dev#5820
