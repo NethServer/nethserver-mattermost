@@ -7,7 +7,7 @@
 
 Summary: NethServer Mattermost configuration
 Name: nethserver-mattermost
-Version: 1.4.0
+Version: 1.4.1
 Release: 1%{?dist}
 License: Proprietary
 Source: %{name}-%{version}.tar.gz
@@ -70,6 +70,10 @@ cat %{name}-%{version}-filelist
 
 
 %changelog
+* Wed Oct 09 2019 Giacomo Sanchietti <giacomo.sanchietti@nethesis.it> - 1.4.1-1
+- Mattermost bulk user creation script fails - Bug NethServer/dev#5851
+- Mattermost 5.15 - NethServer/dev#5857
+
 * Tue Oct 01 2019 Giacomo Sanchietti <giacomo.sanchietti@nethesis.it> - 1.4.0-1
 - Sudoers based authorizations for Cockpit UI - NethServer/dev#5805
 - systemd unit: catch stdout to avoid useless logs (#22)
