@@ -64,7 +64,7 @@ cat %{name}-%{version}-filelist
 %defattr(-,root,root)
 %dir /opt/mattermost %attr(0755,mattermost,mattermost)
 %attr(-,mattermost,mattermost) /opt/mattermost/*
-%config /opt/mattermost/config/config.json
+%config(noreplace) /opt/mattermost/config/config.json
 %doc COPYING
 %dir %{_nseventsdir}/%{name}-update
 
