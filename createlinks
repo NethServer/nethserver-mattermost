@@ -80,14 +80,3 @@ event_actions($event, 'nethserver-mattermost-restore' => 50);
 
 event_services($event, 'httpd' => 'restart');
 event_services($event, 'mattermost' => 'restart');
-
-#--------------------------------------------------
-# actions for tls-policy-save event
-#--------------------------------------------------
-
-$event = 'tls-policy-save';
-
-event_templates($event, qw(
-  /etc/httpd/conf.d/zz_mattermost.conf
-));
-
