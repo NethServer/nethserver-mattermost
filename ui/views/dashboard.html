@@ -2,6 +2,7 @@
 
 <div id="loader" class="spinner spinner-lg"></div>
 <div id="content">
+    <h3 i18n="statistics"></h3>
     <div class="stats-container card-pf-utilization-details">
         <span class="card-pf-utilization-card-details-count" id="stats-users">0</span>
         <span class="card-pf-utilization-card-details-description">
@@ -27,6 +28,20 @@
         </span>
     </div>
 
+    <h3 i18n="disk_usage"></h3>
+    <div class="stats-container card-pf-utilization-details">
+        <span class="card-pf-utilization-card-details-count" id="stats-database-usage">0</span>
+        <span class="card-pf-utilization-card-details-description">
+            <span class="card-pf-utilization-card-details-line-2 stats-text" i18n="database"></span>
+        </span>
+    </div>
+    <div class="stats-container card-pf-utilization-details">
+        <span class="card-pf-utilization-card-details-count" id="stats-data-usage">0</span>
+        <span class="card-pf-utilization-card-details-description">
+            <span class="card-pf-utilization-card-details-line-2 stats-text" i18n="data"></span>
+        </span>
+    </div>
+
     <a id="link" target="_blank" href="" class="btn btn-primary btn-lg open-app" i18n="open_app"></a>
 </div>
 
@@ -48,8 +63,16 @@
                 success = JSON.parse(success);
 
                 var status = success.status;
+                var statusText;
+
                 for (var s in status) {
-                    $('#stats-' + s).text(status[s] || 0)
+                    if (s === 'database-usage' || s === 'data-usage') {
+                        // format byte size
+                        statusText = byteFormat(status[s]);
+                    } else {
+                        statusText = status[s];
+                    }
+                    $('#stats-' + s).text(statusText || 0)
                 }
 
                 if (success.configuration.props.status == 'enabled' && success.configuration.props.VirtualHost.length > 0) {
