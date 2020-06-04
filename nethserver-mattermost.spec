@@ -7,7 +7,7 @@
 
 Summary: NethServer Mattermost configuration
 Name: nethserver-mattermost
-Version: 1.4.6
+Version: 1.4.7
 Release: 1%{?dist}
 License: Proprietary
 Source: %{name}-%{version}.tar.gz
@@ -70,6 +70,11 @@ cat %{name}-%{version}-filelist
 
 
 %changelog
+* Thu Jun 04 2020 Giacomo Sanchietti <giacomo.sanchietti@nethesis.it> - 1.4.7-1
+- Mattermost: Database and data disk usage in dashboard - NethServer/dev#6191
+- Mattermost 5.23.1 - NethServer/dev#6189
+- Remove TLS 1.0 and TLS 1.1 - NethServer/dev#6170
+
 * Fri May 15 2020 Giacomo Sanchietti <giacomo.sanchietti@nethesis.it> - 1.4.6-1
 - Mattermost 5.23.0 - NethServer/dev#6167
 
