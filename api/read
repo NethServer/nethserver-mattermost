@@ -42,7 +42,7 @@ else
     posts=$(_query "select count(*) from posts where deleteat = 0")
 
     database_usage=$(su - postgres -c "scl enable rh-postgresql94 -- psql -q -A -t --port=55432 -c 'SELECT  pg_database_size('\''mattermost'\'');'")
-    data_usage=$(/usr/bin/du -s /var/lib/nethserver/mattermost | cut -f1)
+    data_usage=$(/usr/bin/du -sb /var/lib/nethserver/mattermost | cut -f1)
 
     prop=$(/sbin/e-smith/config getjson mattermost)
     printf '{"status": { "users": "%s", "teams": "%s", "channels": "%s", "posts": "%s", "database-usage": "%s", "data-usage": "%s" },"configuration":%s}' "$users" "$teams" "$channels" "$posts" "$database_usage" "$data_usage" "$prop"
