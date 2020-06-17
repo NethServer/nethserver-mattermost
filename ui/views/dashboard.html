@@ -70,7 +70,9 @@
                         // format byte size
                         statusText = byteFormat(status[s]);
                     } else {
-                        statusText = status[s];
+                        // make numbers human readable
+                        statusText = humanFormat(status[s]);
+                        $('#stats-' + s).attr('title', status[s])
                     }
                     $('#stats-' + s).text(statusText || 0)
                 }
