@@ -7,7 +7,7 @@
 
 Summary: NethServer Mattermost configuration
 Name: nethserver-mattermost
-Version: 1.4.7
+Version: 1.4.8
 Release: 1%{?dist}
 License: Proprietary
 Source: %{name}-%{version}.tar.gz
@@ -70,6 +70,10 @@ cat %{name}-%{version}-filelist
 
 
 %changelog
+* Wed Jul 01 2020 Giacomo Sanchietti <giacomo.sanchietti@nethesis.it> - 1.4.8-1
+- Mattermost 5.24.2 - NethServer/dev#6214
+- Human readable numbers in Cockpit dashboards - NethServer/dev#6206
+
 * Thu Jun 04 2020 Giacomo Sanchietti <giacomo.sanchietti@nethesis.it> - 1.4.7-1
 - Mattermost: Database and data disk usage in dashboard - NethServer/dev#6191
 - Mattermost 5.23.1 - NethServer/dev#6189
