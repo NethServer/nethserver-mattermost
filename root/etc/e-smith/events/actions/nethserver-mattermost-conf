@@ -20,21 +20,78 @@
 # along with NethServer.  If not, see COPYING.
 #
 
-su - postgres -c "scl enable rh-postgresql94 -- psql --port=55432 -lqt | cut -d \| -f 1 | grep -q -w mattermost"
+echo START //// # ////
+
+su - postgres -c "scl enable rh-postgresql12 -- psql --port=55434 -lqt | cut -d \| -f 1 | grep -q -w mattermost"
 if [ $? -eq 1 ]; then # database do not exists
 
-    # create db and users
-    tmp_sql=`mktemp`
-    chmod a+r $tmp_sql
-    password=`perl -e "use NethServer::Password; print NethServer::Password::store('mattermost');"`
+    echo 2 ////
+
+    su - postgres -c "scl enable rh-postgresql94 -- psql --port=55432 -lqt | cut -d \| -f 1 | grep -q -w mattermost"
+    if [ $? -eq 0 ]; then
+        # migrate data from postgresql 9.4
+        echo "Migrating data from postgresql 9.4 to postgresql 12..."
+        systemctl stop rh-postgresql94-postgresql
+        systemctl stop rh-postgresql12-postgresql
+        su - postgres -c "export LD_LIBRARY_PATH=/opt/rh/rh-postgresql94/root/usr/lib64:/opt/rh/rh-postgresql12/root/usr/lib64:$LD_LIBRARY_PATH && scl enable rh-postgresql12 -- pg_upgrade -b /opt/rh/rh-postgresql94/root/usr/bin -B /opt/rh/rh-postgresql12/root/usr/bin -d /var/opt/rh/rh-postgresql94/lib/pgsql/data -D /var/opt/rh/rh-postgresql12/lib/pgsql/data"
+        if [ $? -eq 0 ]; then
+            echo "Migration completed successfully"
+            # su - postgres -c "/var/lib/pgsql/analyze_new_cluster.sh" # //// needed? generates minimal optimizer statistics
+            systemctl start rh-postgresql94-postgresql
+
+            echo "rh-postgresql94-postgresql started ////"
+
+            databases=$(su - postgres -c "scl enable rh-postgresql94 -- psql -q -A -t --port=55432 -c $'SELECT datname FROM pg_database WHERE datistemplate = false AND datname <> \'postgres\';'")
+
+            if [ $? -eq 0 ]; then
+                if [[ "$databases" == "mattermost" ]]; then
+                    # only mattermost database is present, delete all postgres 9.4 data
+
+                    echo "only mattermost database is present, delete all postgres 9.4 data" ////
+
+                    systemctl stop rh-postgresql94-postgresql
+                    su - postgres -c "/var/lib/pgsql/delete_old_cluster.sh"
+                    /sbin/e-smith/config setprop rh-postgresql94-postgresql status disabled
+                    systemctl disable rh-postgresql94-postgresql
+                    rm -rf /usr/lib/systemd/system/rh-postgresql94-postgresql.service
+                    rm -rf /usr/lib/systemd/system/rh-postgresql94-postgresql@.service
+                    systemctl daemon-reload
+                    # ?? yum remove rh-postgresql94 ////
+
+                    echo "Cleaned rh-postgresql94-postgresql.service ////"
+                else
+                    # other databases are present, delete only mattermost database in postgresql 9.4
+
+                    echo "other databases are present, delete only mattermost database in postgresql 9.4 ////"
+
+                    su - postgres -c "scl enable rh-postgresql94 -- psql -q -A --port=55432 -c 'DROP DATABASE mattermost;'"
+                fi
+            else
+                echo "An error occured while retrieving list of databases  ////"
+            fi
+        else
+            echo "An error occured during postgresql migration"
+        fi
+        systemctl start rh-postgresql12-postgresql
+
+        echo "rh-postgresql12-postgresql started ////"
+
+    else
+
+        echo SKIP ////
+
+        # create db and users
+        tmp_sql=`mktemp`
+        chmod a+r $tmp_sql
+        password=`perl -e "use NethServer::Password; print NethServer::Password::store('mattermost');"`
 cat << EOF > $tmp_sql
 CREATE database mattermost;
 CREATE USER mattuser WITH PASSWORD '$password';
 ALTER USER mattuser WITH SUPERUSER;
 GRANT ALL PRIVILEGES ON DATABASE mattermost to mattuser;
 EOF
-    su - postgres  -c "scl enable rh-postgresql94 -- psql --port=55432 < $tmp_sql" >/dev/null
-    rm -f $tmp_sql
-
+        su - postgres  -c "scl enable rh-postgresql12 -- psql --port=55434 < $tmp_sql" >/dev/null
+        rm -f $tmp_sql
+        fi
 fi
 
