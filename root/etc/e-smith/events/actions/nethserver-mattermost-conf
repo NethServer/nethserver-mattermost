@@ -20,6 +20,11 @@
 # along with NethServer.  If not, see COPYING.
 #
 
+systemctl is-active --quiet rh-postgresql12-postgresql
+if [[ $? -ne 0 ]]; then
+        echo "[ERROR] postgresql12 is not running, exiting"
+        exit 1
+fi
 su - postgres -c "scl enable rh-postgresql12 -- psql --port=55434 -lqt | cut -d \| -f 1 | grep -q -w mattermost"
 if [[ $? -eq 0 ]]; then # mattermost database exists, exiting
     exit 0
@@ -32,11 +37,11 @@ if [[ $? -eq 0 ]]; then
         echo "[ERROR] An error occured while retrieving list of databases"
         exit 1
     fi
-    systemctl stop rh-postgresql94-postgresql
-    systemctl stop rh-postgresql12-postgresql
+    systemctl stop rh-postgresql94-postgresql rh-postgresql12-postgresql
     su - postgres -c "export LD_LIBRARY_PATH=/opt/rh/rh-postgresql94/root/usr/lib64:/opt/rh/rh-postgresql12/root/usr/lib64:$LD_LIBRARY_PATH && scl enable rh-postgresql12 -- pg_upgrade -b /opt/rh/rh-postgresql94/root/usr/bin -B /opt/rh/rh-postgresql12/root/usr/bin -d /var/opt/rh/rh-postgresql94/lib/pgsql/data -D /var/opt/rh/rh-postgresql12/lib/pgsql/data"
     if [[ $? -ne 0 ]]; then
         echo "[ERROR] An error occured during postgresql migration"
+        systemctl start rh-postgresql94-postgresql rh-postgresql12-postgresql
         exit 1
     fi
     echo "[NOTICE] Migration completed successfully"
@@ -44,18 +49,11 @@ if [[ $? -eq 0 ]]; then
         # only mattermost database is present, delete all postgres 9.4 data
         /sbin/e-smith/config setprop rh-postgresql94-postgresql status disabled
         systemctl disable rh-postgresql94-postgresql
-        rm -rf '/var/opt/rh/rh-postgresql94/lib/pgsql/data'
+        rm -rf '/var/opt/rh/rh-postgresql94/lib/pgsql/data/*'
         echo "[NOTICE] postgresql 9.4 is no longer needed and has been disabled"
     else
         echo "[NOTICE] postgresql 9.4 seems to be still in use. Removing only mattermost database"
         systemctl start rh-postgresql94-postgresql
-        for ((attempt=1; attempt<=10; a++)); do
-            su - postgres  -c "scl enable rh-postgresql94 -- pg_isready -p 55432"
-            if [[ $? -eq 0 ]]; then
-                break
-            fi
-            sleep 1
-        done
         su - postgres -c "scl enable rh-postgresql94 -- psql -q -A --port=55432 -c 'DROP DATABASE mattermost;'"
         if [[ $? -ne 0 ]]; then
             echo "[ERROR] Error while dropping mattermost database"
@@ -63,7 +61,7 @@ if [[ $? -eq 0 ]]; then
     fi
     systemctl start rh-postgresql12-postgresql
 else
-    # create db and users
+    echo "[NOTICE] Creating mattermost database from scratch"
     tmp_sql=`mktemp`
     chmod a+r $tmp_sql
     password=`perl -e "use NethServer::Password; print NethServer::Password::store('mattermost');"`
