@@ -1,6 +1,7 @@
 [Unit]
 Description=Mattermost
-After=syslog.target network.target postgresql-9.4.service
+After=syslog.target network.target rh-postgresql12-postgresql.service
+Wants=rh-postgresql12-postgresql.service
 
 [Service]
 Type=simple

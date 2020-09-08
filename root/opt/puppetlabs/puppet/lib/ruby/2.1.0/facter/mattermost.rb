@@ -7,11 +7,11 @@ Facter.add('mattermost') do
         mattermost = {}
         pass = File.read("/var/lib/nethserver/secrets/mattermost").strip
 
-        posts = Facter::Core::Execution.exec("psql 'postgresql://mattuser:#{pass}@localhost:55432/mattermost' -Aqt -c 'SELECT count(*) FROM Posts WHERE DeleteAt = 0'")
+        posts = Facter::Core::Execution.exec("psql 'postgresql://mattuser:#{pass}@localhost:55434/mattermost' -Aqt -c 'SELECT count(*) FROM Posts WHERE DeleteAt = 0'")
         mattermost['posts'] = posts.to_i
-        users = Facter::Core::Execution.exec("psql 'postgresql://mattuser:#{pass}@localhost:55432/mattermost' -Aqt -c 'SELECT count(*) FROM Users WHERE DeleteAt = 0'")
+        users = Facter::Core::Execution.exec("psql 'postgresql://mattuser:#{pass}@localhost:55434/mattermost' -Aqt -c 'SELECT count(*) FROM Users WHERE DeleteAt = 0'")
         mattermost['users'] = users.to_i
-        teams = Facter::Core::Execution.exec("psql 'postgresql://mattuser:#{pass}@localhost:55432/mattermost' -Aqt -c 'SELECT count(*) FROM Teams WHERE DeleteAt = 0'")
+        teams = Facter::Core::Execution.exec("psql 'postgresql://mattuser:#{pass}@localhost:55434/mattermost' -Aqt -c 'SELECT count(*) FROM Teams WHERE DeleteAt = 0'")
         mattermost['teams'] = teams.to_i
 
         mattermost

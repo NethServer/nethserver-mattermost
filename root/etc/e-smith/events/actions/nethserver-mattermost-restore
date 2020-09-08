@@ -16,7 +16,7 @@ if [ -f /var/lib/nethserver/mattermost/backup/mattermost.sql ]; then
     echo "CREATE database mattermost; CREATE USER mattuser WITH PASSWORD '$password'; GRANT ALL PRIVILEGES ON DATABASE mattermost to mattuser;" >> $drop_sql 
     # allow new connections to db
     echo "UPDATE pg_database SET datallowconn = 'true' WHERE datname = 'mattermost';" >> $drop_sql
-    su - postgres -c "scl enable rh-postgresql94 -- psql --port=55432 < $drop_sql" >/dev/null
-    su - postgres -c "scl enable rh-postgresql94 -- psql --port=55432 mattermost < /var/lib/nethserver/mattermost/backup/mattermost.sql" >/dev/null
+    su - postgres -c "scl enable rh-postgresql12 -- psql --port=55434 < $drop_sql" >/dev/null
+    su - postgres -c "scl enable rh-postgresql12 -- psql --port=55434 mattermost < /var/lib/nethserver/mattermost/backup/mattermost.sql" >/dev/null
     rm -f $drop_sql
 fi

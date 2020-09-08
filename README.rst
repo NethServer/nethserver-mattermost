@@ -5,7 +5,7 @@ nethserver-mattermost
 Stack:
 
 - Mattermost
-- PostgreSQL 9.4 listening on non-standard port 55432
+- PostgreSQL 12 listening on non-standard port 55434
 - Apache as proxy server
 
 Apache configuration derived from: https://github.com/mattermost/docs/issues/1114

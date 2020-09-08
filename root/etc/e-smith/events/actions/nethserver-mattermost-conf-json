@@ -60,7 +60,7 @@ if ($data->{'SqlSettings'}->{'DriverName'} ne "postgres") {
 
 # Set database connection string
 $data->{'SqlSettings'}->{'DriverName'} = "postgres";
-$data->{'SqlSettings'}->{'DataSource'} = "postgres://mattuser:$password\@localhost:55432/mattermost?sslmode=disable&connect_timeout=10";
+$data->{'SqlSettings'}->{'DataSource'} = "postgres://mattuser:$password\@localhost:55434/mattermost?sslmode=disable&connect_timeout=10";
 
 # Set data directory
 $data->{'FileSettings'}->{'Directory'} = "/var/lib/nethserver/mattermost/data";

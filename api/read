@@ -22,7 +22,7 @@
 
 function _query
 {
-    echo $1 | su - postgres  -c "scl enable rh-postgresql94 -- psql  --port=55432 -t -d mattermost 2>/dev/null| tr -d '[:space:]' 2>/dev/null"
+    echo $1 | su - postgres  -c "scl enable rh-postgresql12 -- psql  --port=55434 -t -d mattermost 2>/dev/null| tr -d '[:space:]' 2>/dev/null"
 }
 
 input=$(cat)
@@ -41,7 +41,7 @@ else
     channels=$(_query "select count(*) from channels where deleteat = 0")
     posts=$(_query "select count(*) from posts where deleteat = 0")
 
-    database_usage=$(su - postgres -c "scl enable rh-postgresql94 -- psql -q -A -t --port=55432 -c 'SELECT  pg_database_size('\''mattermost'\'');'")
+    database_usage=$(su - postgres -c "scl enable rh-postgresql12 -- psql -q -A -t --port=55434 -c 'SELECT  pg_database_size('\''mattermost'\'');'")
     data_usage=$(/usr/bin/du -sb /var/lib/nethserver/mattermost | cut -f1)
 
     prop=$(/sbin/e-smith/config getjson mattermost)
