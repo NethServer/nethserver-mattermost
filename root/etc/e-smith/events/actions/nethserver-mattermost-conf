@@ -47,7 +47,7 @@ if [[ $? -eq 0 ]]; then
         rm -rf '/var/opt/rh/rh-postgresql94/lib/pgsql/data'
         echo "[NOTICE] postgresql 9.4 is no longer needed and has been disabled"
     else
-        echo "[NOTICE] postgresql 9.4 seems to be still used. Removing only mattermost database"
+        echo "[NOTICE] postgresql 9.4 seems to be still in use. Removing only mattermost database"
         systemctl start rh-postgresql94-postgresql
         for ((attempt=1; attempt<=10; a++)); do
             su - postgres  -c "scl enable rh-postgresql94 -- pg_isready -p 55432"
