@@ -49,7 +49,7 @@ if [[ $? -eq 0 ]]; then
         # only mattermost database is present, delete all postgres 9.4 data
         /sbin/e-smith/config setprop rh-postgresql94-postgresql status disabled
         systemctl disable rh-postgresql94-postgresql
-        rm -rf '/var/opt/rh/rh-postgresql94/lib/pgsql/data/*'
+        rm -rf /var/opt/rh/rh-postgresql94/lib/pgsql/data/*
         echo "[NOTICE] postgresql 9.4 is no longer needed and has been disabled"
     else
         echo "[NOTICE] postgresql 9.4 seems to be still in use. Removing only mattermost database"
