@@ -71,11 +71,17 @@ if ($firstRun) {
   $data->{'EmailSettings'}->{'PushNotificationContents'} = "full";
   $data->{'EmailSettings'}->{'PushNotificationServer'} = "https://push.mattermost.com";
   $data->{'EmailSettings'}->{'SendEmailNotifications'} = "true";
+  $data->{'EmailSettings'}->{'SMTPServer'} = "localhost";
+  $data->{'EmailSettings'}->{'SMTPPort'} = "25";
+} else {
+  # Fix issue NethServer/dev#6273
+  if ($data->{'EmailSettings'}->{'SMTPServer'} eq "localhost" && $data->{'EmailSettings'}->{'SMTPPort'} eq "10025") {
+    $data->{'EmailSettings'}->{'SMTPServer'} = "localhost";
+    $data->{'EmailSettings'}->{'SMTPPort'} = "25";
+  }
 }
 
 # Configure mail notifications
-set_if_empty('EmailSettings', 'SMTPServer', 'localhost');
-set_if_empty('EmailSettings', 'SMTPPort', '25');
 set_if_empty('EmailSettings', 'InviteSalt', $salt);
 set_if_empty('EmailSettings', 'FeedbackEmail', "no-reply@".$domain);
 set_if_empty('EmailSettings', 'FeedbackName', "Mattermost $company");
