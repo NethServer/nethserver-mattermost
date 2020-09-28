@@ -67,6 +67,11 @@ Example: ::
 
   mattermost-bulk-user-create Password,1234
 
+Log files
+=========
+
+The ``mattermost`` service logs are created under the ``/opt/mattermost/logs/`` directory
+and are rotated by Mattermost itself.
 
 Cockpit API
 ===========
