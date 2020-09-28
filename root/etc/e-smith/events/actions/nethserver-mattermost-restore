@@ -12,8 +12,9 @@ if [ -f /var/lib/nethserver/mattermost/backup/mattermost.sql ]; then
     # drop the db, then recreate it
     echo "DROP DATABASE mattermost;" >> $drop_sql
     echo "DROP USER IF EXISTS mattuser;" >> $drop_sql
+    echo "CREATE DATABASE mattermost WITH ENCODING 'UTF8' LC_COLLATE='en_US.UTF-8' LC_CTYPE='en_US.UTF-8' TEMPLATE=template0;" >> $drop_sql
     password=`perl -e "use NethServer::Password; print NethServer::Password::store('mattermost');"`
-    echo "CREATE database mattermost; CREATE USER mattuser WITH PASSWORD '$password'; GRANT ALL PRIVILEGES ON DATABASE mattermost to mattuser;" >> $drop_sql 
+    echo "CREATE USER mattuser WITH PASSWORD '$password'; GRANT ALL PRIVILEGES ON DATABASE mattermost to mattuser;" >> $drop_sql
     # allow new connections to db
     echo "UPDATE pg_database SET datallowconn = 'true' WHERE datname = 'mattermost';" >> $drop_sql
     su - postgres -c "scl enable rh-postgresql12 -- psql --port=55434 < $drop_sql" >/dev/null
