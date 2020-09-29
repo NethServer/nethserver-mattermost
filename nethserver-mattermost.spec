@@ -7,7 +7,7 @@
 
 Summary: NethServer Mattermost configuration
 Name: nethserver-mattermost
-Version: 1.5.1
+Version: 1.5.2
 Release: 1%{?dist}
 License: Proprietary
 Source: %{name}-%{version}.tar.gz
@@ -70,6 +70,9 @@ cat %{name}-%{version}-filelist
 
 
 %changelog
+* Tue Sep 29 2020 Giacomo Sanchietti <giacomo.sanchietti@nethesis.it> - 1.5.2-1
+- Mattermost DB encoding error with LATIN1 - Bug NethServer/dev#6286
+
 * Mon Sep 21 2020 Giacomo Sanchietti <giacomo.sanchietti@nethesis.it> - 1.5.1-1
 - Mattermost wrong SMTP configiration - Bug NethServer/dev#6273
 - Mattermost 5.27.0 - NethServer/dev#6272
