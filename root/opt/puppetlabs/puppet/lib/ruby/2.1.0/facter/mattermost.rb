@@ -9,7 +9,7 @@ Facter.add('mattermost') do
 
         posts = Facter::Core::Execution.exec("psql 'postgresql://mattuser:#{pass}@localhost:55434/mattermost' -Aqt -c 'SELECT count(*) FROM Posts WHERE DeleteAt = 0'")
         mattermost['posts'] = posts.to_i
-        users = Facter::Core::Execution.exec("psql 'postgresql://mattuser:#{pass}@localhost:55434/mattermost' -Aqt -c 'SELECT count(*) FROM Users WHERE DeleteAt = 0'")
+        users = Facter::Core::Execution.exec("psql 'postgresql://mattuser:#{pass}@localhost:55434/mattermost' -Aqt -c 'SELECT count(*) FROM Users WHERE DeleteAt = 0 and id not in (SELECT userid from Bots)'")
         mattermost['users'] = users.to_i
         teams = Facter::Core::Execution.exec("psql 'postgresql://mattuser:#{pass}@localhost:55434/mattermost' -Aqt -c 'SELECT count(*) FROM Teams WHERE DeleteAt = 0'")
         mattermost['teams'] = teams.to_i
