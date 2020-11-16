@@ -1,4 +1,4 @@
-%define mattermost_release 5.28.1
+%define mattermost_release 5.29.0
 
 # HACK: avoid "No build ID note found" error
 %undefine _missing_build_ids_terminate_build
