@@ -67,10 +67,10 @@ $data->{'FileSettings'}->{'Directory'} = "/var/lib/nethserver/mattermost/data";
 
 # Enable mail and push notifications on the first configuration
 if ($firstRun) {
-  $data->{'EmailSettings'}->{'SendPushNotifications'} = "true";
+  $data->{'EmailSettings'}->{'SendPushNotifications'} = JSON::true;
   $data->{'EmailSettings'}->{'PushNotificationContents'} = "full";
   $data->{'EmailSettings'}->{'PushNotificationServer'} = "https://push.mattermost.com";
-  $data->{'EmailSettings'}->{'SendEmailNotifications'} = "true";
+  $data->{'EmailSettings'}->{'SendEmailNotifications'} = JSON::true;
   $data->{'EmailSettings'}->{'SMTPServer'} = "localhost";
   $data->{'EmailSettings'}->{'SMTPPort'} = "25";
 } else {
@@ -88,8 +88,8 @@ set_if_empty('EmailSettings', 'FeedbackName', "Mattermost $company");
 set_if_empty('EmailSettings', 'FeedbackOrganization', $company);
 
 # Configure logging
-$data->{'LogSettings'}->{'EnableConsole'} = "false";
-set_if_empty('LogSettings', 'EnableFile', 'true');
+$data->{'LogSettings'}->{'EnableConsole'} = JSON::false;
+set_if_empty('LogSettings', 'EnableFile', JSON::true);
 set_if_empty('LogSettings', 'FileLevel', 'error');
 
 # General options
