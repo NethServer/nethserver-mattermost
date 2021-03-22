@@ -23,6 +23,7 @@
 use JSON;
 use NethServer::Password;
 use esmith::ConfigDB;
+
 my $config = "/opt/mattermost/config/config.json";
 my $password = NethServer::Password::store('mattermost');
 my $salt = NethServer::Password->new('', {length => 32})->generate()->getAscii();
@@ -31,6 +32,7 @@ my $db = esmith::ConfigDB->open_ro() || die ("Can't open configuration db");
 my $company = $db->get_prop("OrganizationContact", "Company");
 my $domain = $db->get_value("DomainName");
 my $host = $db->get_prop("mattermost", "VirtualHost") || '';
+my $dataDir = "/var/lib/nethserver/mattermost/data";
 my $firstRun = 0;
 our $data;
 
@@ -65,7 +67,7 @@ my $json;
 }
 $data = decode_json($json);
 
-if ($data->{'SqlSettings'}->{'DriverName'} ne "postgres") {
+if ($data->{'FileSettings'}->{'Directory'} ne $dataDir) {
   $firstRun = 1;
 }
 
@@ -74,7 +76,7 @@ $data->{'SqlSettings'}->{'DriverName'} = "postgres";
 $data->{'SqlSettings'}->{'DataSource'} = "postgres://mattuser:$password\@localhost:55434/mattermost?sslmode=disable&connect_timeout=10";
 
 # Set data directory
-$data->{'FileSettings'}->{'Directory'} = "/var/lib/nethserver/mattermost/data";
+$data->{'FileSettings'}->{'Directory'} = $dataDir;
 
 # Enable mail and push notifications on the first configuration
 if ($firstRun) {
