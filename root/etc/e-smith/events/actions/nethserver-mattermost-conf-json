@@ -32,7 +32,7 @@ my $db = esmith::ConfigDB->open_ro() || die ("Can't open configuration db");
 my $company = $db->get_prop("OrganizationContact", "Company");
 my $domain = $db->get_value("DomainName");
 my $host = $db->get_prop("mattermost", "VirtualHost") || '';
-my $dataDir = "/var/lib/nethserver/mattermost/data";
+my $dataDir = "/var/lib/nethserver/mattermost/data/";
 my $firstRun = 0;
 our $data;
 
@@ -82,7 +82,7 @@ $data->{'FileSettings'}->{'Directory'} = $dataDir;
 if ($firstRun) {
   $data->{'EmailSettings'}->{'SendPushNotifications'} = JSON::true;
   $data->{'EmailSettings'}->{'PushNotificationContents'} = "full";
-  $data->{'EmailSettings'}->{'PushNotificationServer'} = "https://push.mattermost.com";
+  $data->{'EmailSettings'}->{'PushNotificationServer'} = "https://push-test.mattermost.com";
   $data->{'EmailSettings'}->{'SendEmailNotifications'} = JSON::true;
   $data->{'EmailSettings'}->{'SMTPServer'} = "localhost";
   $data->{'EmailSettings'}->{'SMTPPort'} = "25";
