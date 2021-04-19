@@ -82,7 +82,7 @@ $data->{'FileSettings'}->{'Directory'} = $dataDir;
 if ($firstRun) {
   $data->{'EmailSettings'}->{'SendPushNotifications'} = JSON::true;
   $data->{'EmailSettings'}->{'PushNotificationContents'} = "full";
-  $data->{'EmailSettings'}->{'PushNotificationServer'} = "https://push.mattermost.com";
+  $data->{'EmailSettings'}->{'PushNotificationServer'} = "https://push-test.mattermost.com";
   $data->{'EmailSettings'}->{'SendEmailNotifications'} = JSON::true;
   $data->{'EmailSettings'}->{'SMTPServer'} = "localhost";
   $data->{'EmailSettings'}->{'SMTPPort'} = "25";
