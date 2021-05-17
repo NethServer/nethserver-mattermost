@@ -7,7 +7,7 @@
 
 Summary: NethServer Mattermost configuration
 Name: nethserver-mattermost
-Version: 1.6.6
+Version: 1.6.7
 Release: 1%{?dist}
 License: Proprietary
 Source: %{name}-%{version}.tar.gz
@@ -70,6 +70,9 @@ cat %{name}-%{version}-filelist
 
 
 %changelog
+* Mon May 17 2021 Giacomo Sanchietti <giacomo.sanchietti@nethesis.it> - 1.6.7-1
+- Mattermost 5.35.0 - NethServer/dev#6512
+
 * Mon Apr 19 2021 Giacomo Sanchietti <giacomo.sanchietti@nethesis.it> - 1.6.6-1
 - Mattermost: push notification server overwritten by update - Bug NethServer/dev#6489
 - Mattermost 5.34.1 - NethServer/dev#6484
