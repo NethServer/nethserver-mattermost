@@ -116,3 +116,8 @@ my $uid = getpwnam 'mattermost';
 my $gid = getgrnam 'mattermost';
 
 chown $uid, $gid, $config;
+
+# Reload configuration if the server is running
+if (system("/opt/mattermost/bin/mmctl --local --quiet config show &>/dev/null") == 0) {
+    system("/opt/mattermost/bin/mmctl --local --quiet config reload");
+}
