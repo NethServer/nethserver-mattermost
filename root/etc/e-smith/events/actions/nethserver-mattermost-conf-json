@@ -48,16 +48,6 @@ sub set_if_empty {
 }
 
 
-# Make sure the daemon is stopped to avoid concurrent modifications on the config file
-system("/usr/bin/systemctl stop mattermost");
-
-# Create a new config file if current one is invalid
-if (system("/opt/mattermost/bin/mattermost config validate &>/dev/null") != 0) {
-    system("/opt/mattermost/bin/mattermost config show --json > $config");
-    # this should not be needed if the file already exists
-    system("/usr/bin/chown mattermost mattermost $config");
-}
-
 my $json;
 {
   local $/;
