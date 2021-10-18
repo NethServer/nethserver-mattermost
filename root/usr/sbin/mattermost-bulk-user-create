@@ -49,9 +49,9 @@ sub create_user {
    $stripped =~ s/(@.*)//; # strip domain
    my $password = $default_password || $generator->generate()->getAscii();
   
-   my $cmd = "cd /opt/mattermost; ./bin/mattermost user create --email $user --password '$password' --username $stripped";
+   my $cmd = "cd /opt/mattermost; ./bin/mmctl --local user create --email $user --password '$password' --username $stripped";
 
-   my @output = `cd /opt/mattermost; ./bin/mattermost user search $stripped 2>&1`;
+   my @output = `cd /opt/mattermost; ./bin/mmctl --local user search $stripped 2>&1`;
    foreach (@output) {
        if ($_ =~ /username: $stripped/) {
            print "Skipping existing user: '$stripped'\n";
@@ -63,7 +63,7 @@ sub create_user {
    system($cmd."&>/dev/null");
    if ($? == 0) {
        print "OK\n";
-       system("cd /opt/mattermost; bin/mattermost team add '$team' '$stripped' &>/dev/null");
+       system("cd /opt/mattermost; bin/mmctl --local team add '$team' '$stripped' &>/dev/null");
    } else {
        print "FAIL (Command was: $cmd)\n";
    }
@@ -71,7 +71,7 @@ sub create_user {
 }
 
 print "Creating default team: $team ($org) ... ";
-system("cd /opt/mattermost; bin/mattermost team create --name '$team' --display_name '$org' &>/dev/null");
+system("cd /opt/mattermost; bin/mmctl --local team create --name '$team' --display_name '$org' &>/dev/null");
 # hide error if team already exists
 print "OK\n";
 
