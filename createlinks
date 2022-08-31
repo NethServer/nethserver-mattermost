@@ -76,7 +76,10 @@ event_actions($event, 'nethserver-mattermost-backup' => 50);
 
 $event = 'post-restore-data';
 
-event_actions($event, 'nethserver-mattermost-restore' => 50);
+event_actions($event, 
+  'nethserver-mattermost-fix-rsync-perms' => '10',
+  'nethserver-mattermost-restore' => '50',
+);
 
 event_services($event, 'httpd' => 'restart');
 event_services($event, 'mattermost' => 'restart');
