@@ -7,7 +7,7 @@
 
 Summary: NethServer Mattermost configuration
 Name: nethserver-mattermost
-Version: 1.8.15
+Version: 1.8.16
 Release: 1%{?dist}
 License: Proprietary
 Source: %{name}-%{version}.tar.gz
@@ -70,6 +70,9 @@ cat %{name}-%{version}-filelist
 
 
 %changelog
+* Mon Sep 19 2022 Giacomo Sanchietti <giacomo.sanchietti@nethesis.it> - 1.8.16-1
+- Mattermost 7.3.0 - NethServer/dev#6698
+
 * Fri Sep 02 2022 Giacomo Sanchietti <giacomo.sanchietti@nethesis.it> - 1.8.15-1
 - rsync disaster recovery introduces permissions issue - Bug NethServer/dev#6691
 - Mattermost 7.2.0 - NethServer/dev#6693
