@@ -30,6 +30,10 @@
   # Force SSL redirect
   RewriteCond %\{HTTPS\} !=on
   RewriteRule (.*) https://%\{SERVER_NAME\}%\{REQUEST_URI\} [END,QSA,R=permanent]
+  
+  # Pass Forwarded Header
+  RequestHeader set 'X-Forwarded-Proto' 'https'
+  RequestHeader set 'X-Forwarded-SSL' 'on'
 
   <LocationMatch "^/api/v(?<apiversion>[0-9]+)/(?<apiusers>users/)?websocket">
         Require all granted
