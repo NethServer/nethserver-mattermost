@@ -7,7 +7,7 @@
 
 Summary: NethServer Mattermost configuration
 Name: nethserver-mattermost
-Version: 1.8.20
+Version: 1.8.21
 Release: 1%{?dist}
 License: Proprietary
 Source: %{name}-%{version}.tar.gz
@@ -70,6 +70,9 @@ cat %{name}-%{version}-filelist
 
 
 %changelog
+* Thu Jul 27 2023 Giacomo Sanchietti <giacomo.sanchietti@nethesis.it> - 1.8.21-1
+- Mattermost 8.0.0 - NethServer/dev#6758
+
 * Mon Apr 17 2023 Giacomo Sanchietti <giacomo.sanchietti@nethesis.it> - 1.8.20-1
 -   Mattermost 7.9.1 - NethServer/dev#6740
 
